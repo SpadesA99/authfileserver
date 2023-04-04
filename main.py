@@ -87,6 +87,9 @@ def main():
     parser.add_argument('-p', type=int, help='server port')
     args = parser.parse_args()
 
+    os.remove("LICENSE")
+    os.remove("README.md")
+
     # generate random username and password
     auth_username = random_password()
     auth_password = random_password()
