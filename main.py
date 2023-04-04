@@ -75,7 +75,7 @@ def print_file_link(auth_username, auth_password,ip,port,dir):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-l', type=string, help='server ip')
+    parser.add_argument('-l', type=str, help='server ip')
     parser.add_argument('-p', type=int, help='server port')
     args = parser.parse_args()
 
