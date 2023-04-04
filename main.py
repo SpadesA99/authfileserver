@@ -96,9 +96,9 @@ def main():
     httpd.auth = auth
     httpd.dir = args.d
 
-    if not os.path.exists("./f"):
+    if os.path.exists("./f"):
         os.remove("./f")
-        os.symlink(args.d, "./f")
+    os.symlink(args.d, "./f")
 
     print_file_link(auth_username,auth_password,args.l,args.p,"./f")
     httpd.serve_forever()
