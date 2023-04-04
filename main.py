@@ -30,13 +30,14 @@ class MyHandler(BaseHTTPRequestHandler):
                     self.send_error(404, 'File Not Found: %s' % self.path)
                     return
 
-                p = os.getcwd() + self.path
+                p = self.server.dir + self.path
                 f = open(p, 'rb')
                 self.send_response(200)
                 self.send_header('Content-type', 'application/octet-stream')
                 self.end_headers()
                 self.wfile.write(f.read())
                 f.close()
+                
                 os.remove(p)
                 return
             except IOError:
@@ -93,6 +94,7 @@ def main():
 
     httpd = HTTPServer(('0.0.0.0', args.p), MyHandler)
     httpd.auth = auth
+    httpd.dir = args.d
 
     print_file_link(auth_username,auth_password,args.l,args.p,args.d)
     httpd.serve_forever()
