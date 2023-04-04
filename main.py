@@ -57,13 +57,13 @@ def print_file_link(auth_username, auth_password,ip,port,dir):
         dir = "./"
 
     for filename in os.listdir(dir):
+        if filename.startswith('.'):
+            continue
+
         file_path = os.path.join(dir, filename)
         current_path =  os.path.realpath(__file__)
 
-        if current_path == os.getcwd()+"\\"+filename:
-            continue
-
-        if filename.startswith('.'):
+        if current_path == os.path.join(os.getcwd(), filename):
             continue
 
         if os.path.isdir(file_path):
@@ -79,8 +79,11 @@ def main():
     parser.add_argument('-p', type=int, help='server port')
     args = parser.parse_args()
 
-    os.remove("LICENSE")
-    os.remove("README.md")
+    try:
+        os.remove("LICENSE")
+        os.remove("README.md")
+    except:
+        pass
 
     # generate random username and password
     auth_username = random_password()
