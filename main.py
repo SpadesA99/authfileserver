@@ -77,6 +77,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-l', type=str, help='server ip')
     parser.add_argument('-p', type=int, help='server port')
+    parser.add_argument('-d', type=str, help='file dir')
     args = parser.parse_args()
 
     try:
@@ -93,7 +94,7 @@ def main():
     httpd = HTTPServer(('0.0.0.0', args.p), MyHandler)
     httpd.auth = auth
 
-    print_file_link(auth_username,auth_password,args.l,args.p,None)
+    print_file_link(auth_username,auth_password,args.l,args.p,args.d)
     httpd.serve_forever()
 
 if __name__ == '__main__':
