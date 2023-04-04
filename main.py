@@ -25,19 +25,19 @@ class MyHandler(BaseHTTPRequestHandler):
             pass
         elif self.headers.get('Authorization') == 'Basic ' + str(self.server.auth):
             try:
-                # print( os.path.basename(__file__))
+                # print(os.path.basename(__file__))
                 if self.path == "/" + os.path.basename(__file__):
                     self.send_error(404, 'File Not Found: %s' % self.path)
                     return
 
-                p = self.server.dir + self.path
+                p = os.getcwd() + self.path
                 f = open(p, 'rb')
                 self.send_response(200)
                 self.send_header('Content-type', 'application/octet-stream')
                 self.end_headers()
                 self.wfile.write(f.read())
                 f.close()
-                
+
                 os.remove(p)
                 return
             except IOError:
@@ -96,7 +96,11 @@ def main():
     httpd.auth = auth
     httpd.dir = args.d
 
-    print_file_link(auth_username,auth_password,args.l,args.p,args.d)
+    if not os.path.exists("./f"):
+        os.remove("./f")
+        os.symlink(args.d, "./f")
+
+    print_file_link(auth_username,auth_password,args.l,args.p,"./f")
     httpd.serve_forever()
 
 if __name__ == '__main__':
