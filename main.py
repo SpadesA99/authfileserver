@@ -1,12 +1,10 @@
 #!/usr/bin/python
 import os
-import sys
 import base64
 import random
 import string
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import argparse
-import requests
 
 class MyHandler(BaseHTTPRequestHandler):
     def do_HEAD(self):
@@ -77,6 +75,7 @@ def print_file_link(auth_username, auth_password,ip,port,dir):
 
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument('-l', type=string, help='server ip')
     parser.add_argument('-p', type=int, help='server port')
     args = parser.parse_args()
 
@@ -91,7 +90,7 @@ def main():
     httpd = HTTPServer(('0.0.0.0', args.p), MyHandler)
     httpd.auth = auth
 
-    print_file_link(auth_username,auth_password,requests.get("http://ifconfig.me").text,args.p,None)
+    print_file_link(auth_username,auth_password,args.l,args.p,None)
     httpd.serve_forever()
 
 if __name__ == '__main__':

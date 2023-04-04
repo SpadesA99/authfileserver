@@ -7,5 +7,5 @@
 ```
 git clone https://github.com/SpadesA99/authfileserver.git
 cd authfileserver
-python main.py -p 8080
+python main.py -l 服务器ip -p 8080
 ```
