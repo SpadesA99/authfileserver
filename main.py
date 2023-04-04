@@ -21,17 +21,13 @@ class MyHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
-        auth = self.server.auth
-        print("auth: ", base64.b64decode( str(auth)).decode('ascii'))
-        print("Authorization: ", self.headers.get('Authorization'))
-
         if self.headers.get('Authorization') == None:
             self.do_AUTHHEAD()
             self.wfile.write(b'no auth header received')
             pass
-        elif self.headers.get('Authorization') == 'Basic ' + str(auth):
+        elif self.headers.get('Authorization') == 'Basic ' + str(self.server.auth):
             try:
-                print( os.path.basename(__file__))
+                # print( os.path.basename(__file__))
                 if self.path == "/" + os.path.basename(__file__):
                     self.send_error(404, 'File Not Found: %s' % self.path)
                     return
@@ -61,24 +57,21 @@ def random_password():
 def print_file_link(auth_username, auth_password,ip,port,dir):
     if dir == None:
         dir = "./"
+
     for filename in os.listdir(dir):
         file_path = os.path.join(dir, filename)
         current_path =  os.path.realpath(__file__)
 
-        #判断是否是当前脚本
         if current_path == os.getcwd()+"\\"+filename:
             continue
 
-        #判断 '.' 开头的文件
         if filename.startswith('.'):
             continue
 
-        #目录递归
         if os.path.isdir(file_path):
             print_file_link(auth_username, auth_password, ip, port, file_path)
             continue
 
-        #输出下载链接
         download_url = "http://{0}:{1}@{2}:{3}/{4}".format(auth_username,auth_password,ip,port, file_path.strip("./"))
         print(download_url)
 
