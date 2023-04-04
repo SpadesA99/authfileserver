@@ -6,6 +6,9 @@ import string
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import argparse
 
+symlink_dir = "./authfileserverbin"
+symlink_dir_2 = "authfileserverbin"
+
 class MyHandler(BaseHTTPRequestHandler):
     def do_HEAD(self):
         self.send_response(200)
@@ -60,6 +63,8 @@ def print_file_link(auth_username, auth_password,ip,port,dir):
     for filename in os.listdir(dir):
         if filename.startswith('.'):
             continue
+        if filename == symlink_dir_2:
+            continue
 
         file_path = os.path.join(dir, filename)
         current_path =  os.path.realpath(__file__)
@@ -96,11 +101,11 @@ def main():
     httpd.auth = auth
     httpd.dir = args.d
 
-    if os.path.exists("./f"):
-        os.remove("./f")
-    os.symlink(args.d, "./f")
+    if os.path.exists(symlink_dir):
+        os.remove(symlink_dir)
+    os.symlink(args.d, symlink_dir)
 
-    print_file_link(auth_username,auth_password,args.l,args.p,"./f")
+    print_file_link(auth_username,auth_password,args.l,args.p,symlink_dir)
     httpd.serve_forever()
 
 if __name__ == '__main__':
