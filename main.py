@@ -41,7 +41,10 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.wfile.write(f.read())
                 f.close()
 
-                os.remove(p)
+                if self.server.autoremove :
+                    os.remove(p)
+                    pass
+
                 return
             except IOError:
                 self.send_error(404, 'File Not Found: %s' % self.path)
@@ -84,6 +87,7 @@ def main():
     parser.add_argument('-l', type=str, help='server ip')
     parser.add_argument('-p', type=int, help='server port')
     parser.add_argument('-d', type=str, help='file dir')
+    parser.add_argument('-e', type=bool, help='auto remove file')
     args = parser.parse_args()
 
     try:
@@ -100,6 +104,7 @@ def main():
     httpd = HTTPServer(('0.0.0.0', args.p), MyHandler)
     httpd.auth = auth
     httpd.dir = args.d
+    httpd.autoremove = args.e
 
     if os.path.exists(symlink_dir):
         os.remove(symlink_dir)
