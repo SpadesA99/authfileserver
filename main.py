@@ -9,6 +9,7 @@ import argparse
 symlink_dir = "./authfileserverbin"
 symlink_dir_2 = "authfileserverbin"
 
+
 class MyHandler(BaseHTTPRequestHandler):
     def do_HEAD(self):
         self.send_response(200)
@@ -41,7 +42,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.wfile.write(f.read())
                 f.close()
 
-                if self.server.autoremove :
+                if self.server.autoremove == 1:
                     os.remove(p)
                     pass
 
@@ -53,13 +54,15 @@ class MyHandler(BaseHTTPRequestHandler):
             self.wfile.write(b'not authenticated')
             pass
 
+
 def random_password():
     length = 8
     chars = string.ascii_letters + string.digits
     random.seed = (os.urandom(1024))
     return ''.join(random.choice(chars) for i in range(length))
 
-def print_file_link(auth_username, auth_password,ip,port,dir):
+
+def print_file_link(auth_username, auth_password, ip, port, dir):
     if dir == None:
         dir = "./"
 
@@ -70,7 +73,7 @@ def print_file_link(auth_username, auth_password,ip,port,dir):
             continue
 
         file_path = os.path.join(dir, filename)
-        current_path =  os.path.realpath(__file__)
+        current_path = os.path.realpath(__file__)
 
         if current_path == os.path.join(os.getcwd(), filename):
             continue
@@ -79,15 +82,17 @@ def print_file_link(auth_username, auth_password,ip,port,dir):
             print_file_link(auth_username, auth_password, ip, port, file_path)
             continue
 
-        download_url = "http://{0}:{1}@{2}:{3}/{4}".format(auth_username,auth_password,ip,port, file_path.strip("./"))
+        download_url = "http://{0}:{1}@{2}:{3}/{4}".format(
+            auth_username, auth_password, ip, port, file_path.strip("./"))
         print(download_url)
+
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-l', type=str, help='server ip')
     parser.add_argument('-p', type=int, help='server port')
     parser.add_argument('-d', type=str, help='file dir')
-    parser.add_argument('-e', type=bool, help='auto remove file')
+    parser.add_argument('-e', type=int, help='auto remove file')
     args = parser.parse_args()
 
     try:
@@ -99,7 +104,8 @@ def main():
     # generate random username and password
     auth_username = random_password()
     auth_password = random_password()
-    auth = base64.b64encode(bytes('%s:%s' % (auth_username, auth_password), 'utf-8')).decode('ascii')
+    auth = base64.b64encode(
+        bytes('%s:%s' % (auth_username, auth_password), 'utf-8')).decode('ascii')
 
     httpd = HTTPServer(('0.0.0.0', args.p), MyHandler)
     httpd.auth = auth
@@ -110,8 +116,9 @@ def main():
         os.remove(symlink_dir)
     os.symlink(args.d, symlink_dir)
 
-    print_file_link(auth_username,auth_password,args.l,args.p,symlink_dir)
+    print_file_link(auth_username, auth_password, args.l, args.p, symlink_dir)
     httpd.serve_forever()
+
 
 if __name__ == '__main__':
     main()
